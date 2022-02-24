@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  S3DriveAPI
+
+  S3DriveBucket: To store files
+  DynamoTable: To store no of file uploads and other information
+  S3DriveAPIGateway: To get presigned url for s3 bucket
+  GetPresignedURLLambda: Generates presigned url
+
+
+Resources:
+  S3DriveBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+        # TODO : Add Life Cycle configuration for moving to Glacier
+        BucketName: !Sub "${AWS::StackName}-${AWS::Region}-s3drive"
+
+  DynamoTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: !Sub "${AWS::StackName}-${AWS::Region}-dynamotable"
+      PrimaryKey:
+        Name: uuid
+        Type: String
+
+  S3DriveAPIGateway:
+    Type: AWS::Serverless::Api
+    MethodSettings:
+      HttpMethod: '*'
+      ResourcePath: '*/'
+    Properties:
+      Name: !Sub "${AWS::StackName}-${AWS::Region}-getpresignedurl"
+      StageName: v1
+      Cors:
+        AllowOrigin: "'*'"
+        AllowMethods: "'OPTIONS,HEAD,GET,PUT,POST,DELETE'"
+
+  GetPresignedURLLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/presigned_url
+      Handler: generate_presigned_url.lambda_handler
+      Role: !GetAtt S3PresignedRole.Arn
+      Runtime: python3.8
+      Timeout: 60
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3DriveBucket
+          REGION: !Sub "${AWS::Region}"
+      Events:
+        GetPresignedURL:
+          Type: Api
+          Properties:
+            Path: /getpresignedurl/{filename}
+            Method: GET
+            RestApiId: !Ref S3DriveAPIGateway
+
+  S3PresignedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      RoleName: !Sub "${AWS::StackName}-${AWS::Region}-S3PresignedRole"
+
+  S3PresignedPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${AWS::StackName}-${AWS::Region}-S3PresignedPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 'logs:*'
+            Resource: !Join [ "", [ !GetAtt S3DriveBucket.Arn, '/*' ] ]
+      Roles:
+        - !Ref S3PresignedRole
+
