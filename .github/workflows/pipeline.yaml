@@ -216,7 +216,7 @@ jobs:
 #            --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}
 
   delete-main:
-    if: startsWith(github.event.ref, 'main')
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
