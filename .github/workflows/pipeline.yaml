@@ -38,9 +38,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          # trigger the tests here
-
+      - name: Install Pip Dependencies
+        run: |
+          pip3 install pytest
+      - name: Run Tests
+        run: |
+          python3 -m pytest -s -vvv ./tests/unit/
   delete-feature:
     if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete'
     runs-on: ubuntu-latest
