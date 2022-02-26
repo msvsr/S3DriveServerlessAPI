@@ -68,12 +68,12 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
-      RoleName: !Sub "${AWS::StackName}-${AWS::Region}-S3PresignedRole"
+      RoleName: !Sub '${AWS::StackName}-${AWS::Region}-S3PresignedRole'
 
-  S3PresignedPolicy:
+  S3PresignedBucketPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: !Sub "${AWS::StackName}-${AWS::Region}-S3PresignedPolicy"
+      PolicyName: !Sub '${AWS::StackName}-${AWS::Region}-S3PresignedBucketPolicy'
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -81,7 +81,24 @@ Resources:
             Action:
               - 's3:PutObject'
               - 'logs:*'
-            Resource: !Join [ "", [ !GetAtt S3DriveBucket.Arn, '/*' ] ]
+            Resource: !Join [ '', [ !GetAtt S3DriveBucket.Arn, '/*' ] ]
       Roles:
         - !Ref S3PresignedRole
 
+  CloudWatchLogsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-${AWS::Region}-CloudWatchLogsPolicy'
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+              - 'logs:DescribeLogStreams'
+            Resource:
+              - 'arn:aws:logs:*:*:*'
+      Roles:
+        - !Ref S3PresignedRole
