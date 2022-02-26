@@ -88,7 +88,7 @@ Resources:
   CloudWatchLogsPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: !Sub ${AWS::StackName}-${AWS::Region}-CloudWatchLogsPolicy'
+      PolicyName: '!Sub ${AWS::StackName}-${AWS::Region}-CloudWatchLogsPolicy'
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
