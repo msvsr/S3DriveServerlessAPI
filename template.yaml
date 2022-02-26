@@ -59,7 +59,7 @@ Resources:
   S3PutObjectDynamoLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./lambdas/dynamdodb_ops
+      CodeUri: ./lambdas/dynamodb_ops
       Handler: s3_put_object.lambda_handler
       Role: !GetAtt S3PresignedRole.Arn
       Runtime: python3.8
