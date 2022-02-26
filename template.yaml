@@ -68,7 +68,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          TABLE_NAME: !Ref DyanmoTable
+          TABLE_NAME: !Ref DynamoTable
           REGION: !Sub "${AWS::Region}"
       Events:
         S3PutObject:
