@@ -4,8 +4,8 @@ Description: >
   S3DriveAPI
 
   S3DriveBucket: To store files
-  DynamoTable: To store no of file uploads and other information
-  S3DriveAPIGateway: To get presigned url for s3 bucket
+  DynamoTable: To store file details.
+  S3DriveAPIGateway: To get presigned url for s3 bucket.
   GetPresignedURLLambda: Generates presigned url
 
 
@@ -15,6 +15,8 @@ Resources:
     Properties:
         # TODO : Add Life Cycle configuration for moving to Glacier
         BucketName: !Sub "${AWS::StackName}-${AWS::Region}-s3drive"
+        VersioningConfiguration:
+          Status: Enabled
 
   DynamoTable:
     Type: AWS::Serverless::SimpleTable
@@ -66,6 +68,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
+          TABLE_NAME: !Ref DyanmoTable
           REGION: !Sub "${AWS::Region}"
       Events:
         S3PutObject:
@@ -90,6 +93,20 @@ Resources:
               - 'sts:AssumeRole'
       RoleName: !Sub '${AWS::StackName}-${AWS::Region}-S3PresignedRole'
 
+  DynamoDBPUTRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      RoleName: !Sub '${AWS::StackName}-${AWS::Region}-DynamoDBPUTRole'
+
   S3PresignedBucketPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -103,6 +120,20 @@ Resources:
             Resource: !Join [ '', [ !GetAtt S3DriveBucket.Arn, '/*' ] ]
       Roles:
         - !Ref S3PresignedRole
+
+  DyanmoDBPUTPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub '${AWS::StackName}-${AWS::Region}-DynamoDBPUTPolicy'
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:PutItem'
+            Resource: !GetAtt DynamoTable.Arn
+      Roles:
+        - !Ref DynamoDBPUTRole
 
   CloudWatchLogsPolicy:
     Type: AWS::IAM::Policy
@@ -121,3 +152,4 @@ Resources:
               - 'arn:aws:logs:*:*:*'
       Roles:
         - !Ref S3PresignedRole
+        - !Ref DynamoDBPUTRole
