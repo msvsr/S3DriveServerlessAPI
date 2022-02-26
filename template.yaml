@@ -56,6 +56,26 @@ Resources:
             Method: GET
             RestApiId: !Ref S3DriveAPIGateway
 
+  S3PutObjectDynamoLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/dynamdodb_ops
+      Handler: s3_put_object.lambda_handler
+      Role: !GetAtt S3PresignedRole.Arn
+      Runtime: python3.8
+      Timeout: 60
+      Environment:
+        Variables:
+          REGION: !Sub "${AWS::Region}"
+      Events:
+        S3PutObject:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: S3DriveBucket
+            Events:
+              - 's3:ObjectCreated:*'
+
   S3PresignedRole:
     Type: AWS::IAM::Role
     Properties:

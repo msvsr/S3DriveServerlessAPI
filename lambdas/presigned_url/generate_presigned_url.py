@@ -40,7 +40,7 @@ def lambda_handler(event, context):
     # Generating pre_signed_url
     pre_signed_url = s3_client.generate_presigned_post(
         Bucket=s3_bucket,
-        Key="uploads/"+filename,
+        Key=filename,
         ExpiresIn=expires_in*60
     )
 
