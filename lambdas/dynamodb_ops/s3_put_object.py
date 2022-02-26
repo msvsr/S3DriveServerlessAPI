@@ -3,6 +3,7 @@ from uuid import uuid4
 import logging
 import boto3
 from dynamodbconverters import convert_to_dynamodb_format
+import mimetypes
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -20,6 +21,7 @@ def lambda_handler(event, context):
     s3object_etag = event.get("s3").get("object").get("eTag")
     s3object_version_id = event.get("s3").get("object").get("versionId")
     dynamodb_key = str(uuid4())
+    content_type = mimetypes.MimeTypes().guess_type(s3object_key)[0]  # Getting mime type
 
     # Getting dynamodb client
     dynamodb_client = boto3.client('dynamodb', region)
@@ -33,7 +35,8 @@ def lambda_handler(event, context):
             'object_creation_date': object_creation_date,
             's3object_key': s3object_key,
             's3object_etag': s3object_etag,
-            's3object_version_id': s3object_version_id
+            's3object_version_id': s3object_version_id,
+            'file_content_type':content_type
         })
     }
 
