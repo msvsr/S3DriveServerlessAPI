@@ -14,7 +14,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
         # TODO : Add Life Cycle configuration for moving to Glacier
-        BucketName: !Sub "${AWS::StackName}-${AWS::Region}-s3drive"
+        BucketName: !Sub "${AWS::StackName}-${AWS::Region}-s3drivedev"
         VersioningConfiguration:
           Status: Enabled
 
