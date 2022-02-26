@@ -3,14 +3,14 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   S3DriveAPI
 
-  S3DriveBucket: To store files
+  S3Drive: To store files
   DynamoTable: To store file details.
   S3DriveAPIGateway: To get presigned url for s3 bucket.
   GetPresignedURLLambda: Generates presigned url
 
 
 Resources:
-  S3DriveBucket:
+  S3Drive:
     Type: AWS::S3::Bucket
     Properties:
         # TODO : Add Life Cycle configuration for moving to Glacier
@@ -48,7 +48,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          BUCKET_NAME: !Ref S3DriveBucket
+          BUCKET_NAME: !Ref S3Drive
           REGION: !Sub "${AWS::Region}"
       Events:
         GetPresignedURL:
@@ -75,7 +75,7 @@ Resources:
           Type: S3
           Properties:
             Bucket:
-              Ref: S3DriveBucket
+              Ref: S3Drive
             Events:
               - 's3:ObjectCreated:*'
 
@@ -117,7 +117,7 @@ Resources:
           - Effect: Allow
             Action:
               - 's3:PutObject'
-            Resource: !Join [ '', [ !GetAtt S3DriveBucket.Arn, '/*' ] ]
+            Resource: !Join [ '', [ !GetAtt S3Drive.Arn, '/*' ] ]
       Roles:
         - !Ref S3PresignedRole
 
