@@ -23,8 +23,8 @@ Resources:
     Properties:
       TableName: !Sub "${AWS::StackName}-${AWS::Region}-dynamotable"
       PrimaryKey:
-        Name: uuid
-        Type: String
+        Name: "uuid"
+        Type: "String"
 
   S3DriveAPIGateway:
     Type: AWS::Serverless::Api

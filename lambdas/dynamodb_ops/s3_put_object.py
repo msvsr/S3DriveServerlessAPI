@@ -37,13 +37,10 @@ def lambda_handler(event, context):
         })
     }
 
-    # Putting data in dynamodb
     try:
-        dynamodb_client.put_item(**put_items)
+        response = dynamodb_client.put_item(**put_items)
         logging.info(f"Successfully added item {dynamodb_key}")
+        logging.info(f"{response}")
     except Exception as e:
-        logging.info("Error: "+str(e))
-
-
-
+        logging.info("Error: " + str(e))
 
