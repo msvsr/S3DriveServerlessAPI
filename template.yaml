@@ -63,7 +63,7 @@ Resources:
     Properties:
       CodeUri: ./lambdas/dynamodb_ops
       Handler: s3_put_object.lambda_handler
-      Role: !GetAtt S3PresignedRole.Arn
+      Role: !GetAtt DynamoDBPUTRole.Arn
       Runtime: python3.8
       Timeout: 60
       Environment:
