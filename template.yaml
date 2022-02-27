@@ -36,6 +36,9 @@ Resources:
         -
           AttributeName: 's3object_version_id'
           KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
 
   S3DriveAPIGateway:
     Type: AWS::Serverless::Api
