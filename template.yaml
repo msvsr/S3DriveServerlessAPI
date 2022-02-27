@@ -19,12 +19,23 @@ Resources:
           Status: Enabled
 
   DynamoTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub "${AWS::StackName}-${AWS::Region}-dynamotable"
-      PrimaryKey:
-        Name: "uuid"
-        Type: "String"
+      TableName: !Sub "${AWS::StackName}-${AWS::Region}-s3dynamotable"
+      AttributeDefinitions:
+        -
+          AttributeName: 's3object_key'
+          AttributeType: 'S'
+        -
+          AttributeName: 's3object_version_id'
+          AttributeType: 'S'
+      KeySchema:
+        -
+          AttributeName: 's3object_key'
+          KeyType: 'HASH'
+        -
+          AttributeName: 's3object_version_id'
+          KeyType: 'RANGE'
 
   S3DriveAPIGateway:
     Type: AWS::Serverless::Api
@@ -61,8 +72,8 @@ Resources:
   S3PutObjectDynamoLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./lambdas/dynamodb_ops
-      Handler: s3_put_object.lambda_handler
+      CodeUri: ./lambdas/s3_event_put_object
+      Handler: report_generator.lambda_handler
       Role: !GetAtt DynamoDBPUTRole.Arn
       Runtime: python3.8
       Timeout: 60
@@ -78,6 +89,21 @@ Resources:
               Ref: S3Drive
             Events:
               - 's3:ObjectCreated:*'
+
+  ReportGenerateLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/report_generator
+      Handler: s3_ops_report_generator.lambda_handler
+      Role: !GetAtt ReportGeneratorRole.Arn
+      Runtime: python3.8
+      Timeout: 60
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoTable
+          REGION: !Sub "${AWS::Region}"
+      Events:
+        - schedule: cron(0 1 * * ? *)
 
   S3PresignedRole:
     Type: AWS::IAM::Role
@@ -107,6 +133,20 @@ Resources:
               - 'sts:AssumeRole'
       RoleName: !Sub '${AWS::StackName}-${AWS::Region}-DynamoDBPUTRole'
 
+  ReportGeneratorRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      RoleName: !Sub '${AWS::StackName}-${AWS::Region}-ReportGeneratorRole'
+
   S3PresignedBucketPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -135,6 +175,20 @@ Resources:
       Roles:
         - !Ref DynamoDBPUTRole
 
+  ReportGeneratorPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub '${AWS::StackName}-${AWS::Region}-ReportGeneratorPolicy'
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:scan'
+            Resource: !GetAtt DynamoTable.Arn
+      Roles:
+        - !Ref ReportGeneratorRole
+
   CloudWatchLogsPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -153,3 +207,4 @@ Resources:
       Roles:
         - !Ref S3PresignedRole
         - !Ref DynamoDBPUTRole
+        - !Ref ReportGeneratorRole
