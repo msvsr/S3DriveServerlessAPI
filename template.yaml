@@ -92,6 +92,7 @@ Resources:
               Ref: S3Drive
             Events:
               - 's3:ObjectCreated:*'
+              - 's3:ObjectRemoved:*'
 
   ReportGenerateLambda:
     Type: AWS::Serverless::Function
