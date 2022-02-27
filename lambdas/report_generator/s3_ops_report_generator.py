@@ -40,6 +40,8 @@ def lambda_handler(event, context):
         pd_items = pd.DataFrame(items)
         items_grouped = pd_items.groupby(['is_deleted'])
 
+        print(pd_items)
+
         print(items_grouped.groups)
 
     except Exception as e:

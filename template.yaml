@@ -103,7 +103,10 @@ Resources:
           TABLE_NAME: !Ref DynamoTable
           REGION: !Sub "${AWS::Region}"
       Events:
-        - schedule: cron(0 1 * * ? *)
+        CronForReportGenerator:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 1 * * ? *)
 
   S3PresignedRole:
     Type: AWS::IAM::Role
