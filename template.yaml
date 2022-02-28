@@ -108,7 +108,7 @@ Resources:
         CronForReportGenerator:
           Type: Schedule
           Properties:
-            Schedule: rate(2 minutes) # cron(0 1 * * ? *)
+            Schedule: cron(0 1 * * ? *)
 
   SNSSubscriptionLambda:
     Type: AWS::Serverless::Function
