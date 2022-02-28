@@ -254,7 +254,7 @@ jobs:
             --no-prompts
 
   delete-feature:
-    if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete' && ${{ RUN_DELETE_FEATURE_JOB == 'YES' }}
+    if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete' && true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
