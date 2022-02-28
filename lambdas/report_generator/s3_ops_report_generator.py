@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     scan = {
         'TableName': table,
         'Select': 'ALL_ATTRIBUTES',
-        'FilterExpression': 'object_creation_date = :date',
+        'FilterExpression': 'object_action_date = :date',
         'ExpressionAttributeValues': TypeSerializer().serialize({':date': yesterday_date})['M']
     }
 
@@ -57,5 +57,15 @@ def lambda_handler(event, context):
               f"Objects Created Content Types Count: \n {exists_msg} \n " \
               f"Objects Deleted Content Types Count: \n {deletes_msg}"
 
+        # Getting SNS client
+        sns_client = boto3.client('sns', region)
+
+        # Publishing message
+        sns_client.publish(
+            TopicArn=sns_topic_arn,
+            Subject=f"Summary of S3 Operations on {yesterday_date}",
+            Message=msg
+        )
+        logging.info("Successfully published")
     except Exception as e:
         logging.info("Error: " + str(e))

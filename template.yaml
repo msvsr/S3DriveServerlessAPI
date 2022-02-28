@@ -203,6 +203,20 @@ Resources:
       Roles:
         - !Ref ReportGeneratorRole
 
+  ReportGeneratorSNSPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub '${AWS::StackName}-${AWS::Region}-ReportGeneratorSNSPolicy'
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'sns:Publish'
+            Resource: !Ref ReportSNSTopic
+      Roles:
+        - !Ref ReportGeneratorRole
+
   CloudWatchLogsPolicy:
     Type: AWS::IAM::Policy
     Properties:
