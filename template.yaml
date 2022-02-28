@@ -115,9 +115,9 @@ Resources:
 
   ReportSNSTopic:
     Type: AWS::SNS::Topic
-      Properties:
-        DisplayName: "S3 ops daily summary"
-        TopicName: !Sub "${AWS::StackName}-${AWS::Region}-report-sns-topic"
+    Properties:
+      DisplayName: "S3 ops daily summary"
+      TopicName: !Sub "${AWS::StackName}-${AWS::Region}-report-sns-topic"
 
   S3PresignedRole:
     Type: AWS::IAM::Role
