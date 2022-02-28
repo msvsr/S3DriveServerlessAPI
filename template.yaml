@@ -24,17 +24,17 @@ Resources:
       TableName: !Sub "${AWS::StackName}-${AWS::Region}-s3dynamotable"
       AttributeDefinitions:
         -
-          AttributeName: 's3object_key'
+          AttributeName: 'object_key'
           AttributeType: 'S'
         -
-          AttributeName: 's3object_version_id'
+          AttributeName: 'object_version_id'
           AttributeType: 'S'
       KeySchema:
         -
-          AttributeName: 's3object_key'
+          AttributeName: 'object_key'
           KeyType: 'HASH'
         -
-          AttributeName: 's3object_version_id'
+          AttributeName: 'object_version_id'
           KeyType: 'RANGE'
       ProvisionedThroughput:
         ReadCapacityUnits: "5"
@@ -106,11 +106,18 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DynamoTable
           REGION: !Sub "${AWS::Region}"
+          SNSTOPIC: !GetAtt ReportSNSTopic.Arn
       Events:
         CronForReportGenerator:
           Type: Schedule
           Properties:
-            Schedule: cron(0 1 * * ? *)
+            Schedule: rate(1 minute) # cron(0 1 * * ? *)
+
+  ReportSNSTopic:
+    Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: "S3 ops daily summary"
+        TopicName: !Sub "${AWS::StackName}-${AWS::Region}-report-sns-topic"
 
   S3PresignedRole:
     Type: AWS::IAM::Role
