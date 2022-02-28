@@ -33,19 +33,10 @@ env:
   # prod "sam package" and "sam deploy" commands.
   # PROD_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   PROD_REGION: us-east-1
-
-  # Make these YES if you want to run that particular job
-  RUN_BUILD_AND_DEPLOY_FEATURE_JOB: YES
-  RUN_BUILD_AND_PACKAGE_JOB: YES
-  RUN_DEPLOY_TESTING_JOB: YES
-  RUN_INTEGRATION_TEST_JOB: YES
-  RUN_DEPLOY_PROD_JOB: YES
-  RUN_DELETE_MAIN_JOB: YES
-  RUN_DELETE_FEATURE_JOB: YES
-
+  # Remove && false to run
 jobs:
   test:
-    if: github.event_name == 'push' && true
+    if: github.event_name == 'push' && false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -59,7 +50,7 @@ jobs:
   build-and-deploy-feature:
     # this stage is triggered only for feature branches (feature*),
     # which will build the stack and deploy to a stack named with branch name.
-    if: startsWith(github.ref, 'refs/heads/feature') && true
+    if: startsWith(github.ref, 'refs/heads/feature') && false
     needs: [test]
     runs-on: ubuntu-latest
     steps:
@@ -91,7 +82,7 @@ jobs:
 
 
   build-and-package:
-    if: github.ref == 'refs/heads/main' && true
+    if: github.ref == 'refs/heads/main' && false
     needs: [test]
     runs-on: ubuntu-latest
     steps:
