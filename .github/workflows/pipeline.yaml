@@ -233,13 +233,13 @@ jobs:
           role-session-name: testing-packaging
           role-duration-seconds: 3600
           role-skip-session-tagging: true
-#
-#      - name: Delete main branch stack
-#        run: |
-#          sam delete \
-#            --stack-name ${TESTING_STACK_NAME} \
-#            --region ${TESTING_REGION} \
-#            --no-prompts
+
+      - name: Delete main branch stack
+        run: |
+          sam delete \
+            --stack-name ${TESTING_STACK_NAME} \
+            --region ${TESTING_REGION} \
+            --no-prompts
 #
 #  delete-feature:
 #    if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete'
