@@ -11,8 +11,7 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     # Getting region environment variables
-    table, region, sns_topic_arn = os.getenv('TABLE_NAME', ''), os.getenv('REGION', ''), os.getenv('TOPICARN', '')
-
+    table, region, sns_topic_arn = os.getenv('TABLE_NAME', ''), os.getenv('REGION', ''), os.getenv('SNSTOPIC', '')
     # Getting dynamodb client
     dynamodb_client = boto3.client('dynamodb', region)
 
@@ -35,11 +34,12 @@ def lambda_handler(event, context):
 
         # Converting dynamodb response to python format
         items = [{k: TypeDeserializer().deserialize(v) for k, v in x} for x in response.get('Items', [])]
+        print("Items", items)
 
         # Getting groups of data based on is_exists
         exists_content_types, deleted_content_types = [], []
         for item in items:
-            if item.get('is_exists'):
+            if item.get('is_exists', ''):
                 exists_content_types.append(item.get('file_content_type'))
             else:
                 deleted_content_types.append(item.get('file_content_type'))
@@ -47,6 +47,7 @@ def lambda_handler(event, context):
         # Counting for each file content type
         exists_content_types_counter = Counter(exists_content_types)
         deleted_content_types_counter = Counter(deleted_content_types)
+        print("Counter: ", exists_content_types_counter, deleted_content_types_counter)
         logging.info(f"No. of Objects Created: {len(exists_content_types)}, No. of Objects Deleted: {len(deleted_content_types)}")
 
         # Constructing message that need to published to SNS

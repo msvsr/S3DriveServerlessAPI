@@ -23,9 +23,9 @@ def lambda_handler(event, context):
     content_type = mimetypes.MimeTypes().guess_type(object_key)[0]  # Getting mime type
     is_exists = None  # Getting event type
     if event.get('ObjectCreated:Put', ''):
-        is_exists = True
+        is_exists = 1
     elif event.get('ObjectRemoved:DeleteMarkerCreated'):
-        is_exists = False
+        is_exists = 0
     # Getting dynamodb client
     dynamodb_client = boto3.client('dynamodb', region)
 

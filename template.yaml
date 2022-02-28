@@ -106,17 +106,17 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DynamoTable
           REGION: !Sub "${AWS::Region}"
-          SNSTOPIC: ReportSNSTopic
+          SNSTOPIC: !Ref ReportSNSTopic
       Events:
         CronForReportGenerator:
           Type: Schedule
           Properties:
-            Schedule: rate(1 minute) # cron(0 1 * * ? *)
+            Schedule: rate(2 minutes) # cron(0 1 * * ? *)
 
   ReportSNSTopic:
     Type: AWS::SNS::Topic
     Properties:
-      DisplayName: "S3 ops daily summary"
+      DisplayName: "S3 operations Daily Summary"
       TopicName: !Sub "${AWS::StackName}-${AWS::Region}-report-sns-topic"
 
   S3PresignedRole:
