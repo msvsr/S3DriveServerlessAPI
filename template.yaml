@@ -21,7 +21,7 @@ Resources:
   DynamoTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub "${AWS::StackName}-${AWS::Region}-s3dynamotable"
+      TableName: !Sub "${AWS::StackName}-${AWS::Region}-dynamotable"
       AttributeDefinitions:
         -
           AttributeName: 'object_key'
