@@ -106,7 +106,7 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DynamoTable
           REGION: !Sub "${AWS::Region}"
-          SNSTOPIC: !GetAtt ReportSNSTopic
+          SNSTOPIC: ReportSNSTopic
       Events:
         CronForReportGenerator:
           Type: Schedule
