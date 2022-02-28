@@ -107,6 +107,26 @@ Resources:
           Properties:
             Schedule: rate(2 minutes) # cron(0 1 * * ? *)
 
+  SNSSubscriptionLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/sns_subscription
+      Handler: sns_email_subscription.lambda_handler
+      Role: !GetAtt Role.Arn
+      Runtime: python3.8
+      Timeout: 60
+      Environment:
+        Variables:
+          SNSTOPIC: !Ref ReportSNSTopic
+          REGION: !Sub "${AWS::Region}"
+      Events:
+        GetPresignedURL:
+          Type: Api
+          Properties:
+            Path: /subscribe/{email}
+            Method: post
+            RestApiId: !Ref S3DriveAPIGateway
+
   ReportSNSTopic:
     Type: AWS::SNS::Topic
     Properties:
@@ -154,6 +174,20 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       RoleName: !Sub '${AWS::StackName}-${AWS::Region}-ReportGeneratorRole'
+
+  SNSSubscriptionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      RoleName: !Sub '${AWS::StackName}-${AWS::Region}-SNSSubscriptionRole'
 
   S3PresignedBucketPolicy:
     Type: AWS::IAM::Policy
@@ -211,6 +245,20 @@ Resources:
       Roles:
         - !Ref ReportGeneratorRole
 
+  SNSSubscriptionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub '${AWS::StackName}-${AWS::Region}-SNSSubscriptionPolicy'
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'sns:Subscribe'
+            Resource: !Ref ReportSNSTopic
+      Roles:
+        - !Ref SNSSubscriptionRole
+
   CloudWatchLogsPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -230,3 +278,4 @@ Resources:
         - !Ref S3PresignedRole
         - !Ref DynamoDBPUTRole
         - !Ref ReportGeneratorRole
+        - !Ref SNSSubscriptionRole

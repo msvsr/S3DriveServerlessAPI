@@ -30,7 +30,7 @@ def lambda_handler(event, context):
             'statusCode': 200,
             'body': json.dumps({
                 "message": "Please provide a valid file extension. Refer this URL for valid file extensions "
-                           "https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types"
+                           "https://www.iana.org/assignments/media-types/media-types.xhtml"
             })
         }
 

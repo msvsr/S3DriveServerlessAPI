@@ -55,8 +55,8 @@ def lambda_handler(event, context):
         exists_msg = "\n".join([f"{x} : {exists_content_types_counter[x]}" for x in exists_content_types_counter])
         deletes_msg = no_of_deletions
         msg = f"Create and delete operation in s3 bucket on {yesterday_date} \n " \
-              f"Objects Created Content Types Count: \n {exists_msg} \n " \
-              f"No.of Objects Deleted: \n {deletes_msg}"
+              f"Objects Created Content Types Count: \n {exists_msg} \n\n " \
+              f"No.of Objects Deleted: {deletes_msg}"
 
         # Getting SNS client
         sns_client = boto3.client('sns', region)
