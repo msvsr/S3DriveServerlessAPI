@@ -33,7 +33,8 @@ env:
   # prod "sam package" and "sam deploy" commands.
   # PROD_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   PROD_REGION: us-east-1
-  # Make these as YES if you want to run that particular job
+
+  # Make these YES if you want to run that particular job
   RUN_TEST_JOB: YES
   RUN_BUILD_AND_DEPLOY_FEATURE_JOB: YES
   RUN_BUILD_AND_PACKAGE_JOB: YES
@@ -45,7 +46,7 @@ env:
 
 jobs:
   test:
-    if: github.event_name == 'push' && ${{ env.RUN_TEST_JOB == 'YES' }}
+    if: github.event_name == 'push' && ${{ env.RUN_TEST_JOB }} == 'YES'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
