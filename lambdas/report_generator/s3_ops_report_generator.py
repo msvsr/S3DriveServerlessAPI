@@ -34,7 +34,6 @@ def lambda_handler(event, context):
 
         # Converting dynamodb response to python format
         items = [{k: TypeDeserializer().deserialize(item[k]) for k in item} for item in response.get('Items', [])]
-        print("Items", items)
 
         # Getting groups of data based on is_exists
         exists_content_types, deleted_content_types = [], []
