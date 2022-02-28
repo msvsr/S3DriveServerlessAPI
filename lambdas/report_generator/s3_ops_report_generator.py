@@ -47,16 +47,16 @@ def lambda_handler(event, context):
 
         # Counting for each file content type
         exists_content_types_counter = Counter(exists_content_types)
-        deleted_content_types_counter = Counter(deleted_content_types)
-        print("Counter: ", exists_content_types_counter, deleted_content_types_counter)
+        no_of_deletions = len(deleted_content_types)
+
         logging.info(f"No. of Objects Created: {len(exists_content_types)}, No. of Objects Deleted: {len(deleted_content_types)}")
 
         # Constructing message that need to published to SNS
         exists_msg = "\n".join([f"{x} : {exists_content_types_counter[x]}" for x in exists_content_types_counter])
-        deletes_msg = "\n".join([f"{x} : {deleted_content_types_counter[x]}" for x in deleted_content_types_counter])
+        deletes_msg = no_of_deletions
         msg = f"Create and delete operation in s3 bucket on {yesterday_date} \n " \
               f"Objects Created Content Types Count: \n {exists_msg} \n " \
-              f"Objects Deleted Content Types Count: \n {deletes_msg}"
+              f"No.of Objects Deleted: \n {deletes_msg}"
 
         # Getting SNS client
         sns_client = boto3.client('sns', region)
@@ -68,5 +68,6 @@ def lambda_handler(event, context):
             Message=msg
         )
         logging.info("Successfully published")
+
     except Exception as e:
         logging.info("Error: " + str(e))
