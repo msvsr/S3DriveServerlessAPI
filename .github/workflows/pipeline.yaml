@@ -59,7 +59,7 @@ jobs:
   build-and-deploy-feature:
     # this stage is triggered only for feature branches (feature*),
     # which will build the stack and deploy to a stack named with branch name.
-    if: startsWith(github.ref, 'refs/heads/feature') && ${{ env.RUN_BUILD_AND_DEPLOY_FEATURE_JOB == 'YES' }}
+    if: startsWith(github.ref, 'refs/heads/feature') && true
     needs: [test]
     runs-on: ubuntu-latest
     steps:
@@ -91,7 +91,7 @@ jobs:
 
 
   build-and-package:
-    if: github.ref == 'refs/heads/main' && ${{ env.RUN_BUILD_AND_PACKAGE_JOB == 'YES' }}
+    if: github.ref == 'refs/heads/main' && true
     needs: [test]
     runs-on: ubuntu-latest
     steps:
@@ -149,7 +149,7 @@ jobs:
           path: packaged-prod.yaml
 
   deploy-testing:
-    if: github.ref == 'refs/heads/main' && true
+    if: github.ref == 'refs/heads/main' && false
     needs: [build-and-package]
     runs-on: ubuntu-latest
     steps:
@@ -183,7 +183,7 @@ jobs:
 
 
   integration-test:
-    if: github.ref == 'refs/heads/main' && ${{ RUN_INTEGRATION_TEST_JOB == 'YES' }}
+    if: github.ref == 'refs/heads/main' && false
     needs: [deploy-testing]
     runs-on: ubuntu-latest
     steps:
@@ -192,7 +192,7 @@ jobs:
           # trigger the integration tests here
 
   deploy-prod:
-    if: github.ref == 'refs/heads/main' && ${{ RUN_DEPLOY_PROD_JOB == 'YES' }}
+    if: github.ref == 'refs/heads/main' && false
     needs: [integration-test]
     runs-on: ubuntu-latest
     # Configure GitHub Action Environment to have a manual approval step before deployment to production
@@ -228,7 +228,7 @@ jobs:
             --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}
 
   delete-main:
-    if: github.ref == 'refs/heads/main' && ${{ RUN_DELETE_MAIN_JOB == 'YES }}
+    if: github.ref == 'refs/heads/main' && false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
