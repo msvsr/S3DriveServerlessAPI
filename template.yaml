@@ -1,7 +1,21 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  # TODO: Need to ADD description
+  Resources:
+  - S3Drive: Stores all the object uploaded through pre-signed url (versioning enabled).
+  - DynamoTable: Stores all the put and delete actions details on S3Drive for further processing.
+  - S3DriveAPIGateway: Base APIGateway for other Events of type API in Lambdas.
+  - GetPresignedURLLambda: Used for getting pre-signed url for uploading object to S3.
+    Invoked by APIGateway endpoint.
+  - S3ActionsDynamoLambda: Used for putting object creation and object remove events from S3Drive.
+    Invoked by S3 event Create and remove object.
+  - ReportGenerateLambda: Used for generating no of objects created and deleted in the previous day.
+    Triggered by CRON job every day at 6:30 AM IST.
+  - SNSSubscriptionLambda: Used for subscribing an email to ReportSNSTopic. Invoked by APIGateway endpoint.
+  - ReportSNSTopic: SNS Topic for reporting no of objects created and deleted to those whose subscribed.
+  - Roles: S3PresignedRole, DynamoDBPUTRole, ReportGeneratorRole, SNSSubscriptionRole
+  - Polices: S3PresignedBucketPolicy, DyanmoDBPUTPolicy, ReportGeneratorPolicy, ReportGeneratorSNSPolicy,
+    SNSSubscriptionPolicy, CloudWatchLogsPolicy
 
 Resources:
   S3Drive:
