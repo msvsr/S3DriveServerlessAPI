@@ -49,6 +49,7 @@ Resources:
   GetPresignedURLLambda:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub '${AWS::StackName}-${AWS::Region}-GetPresignedURLLambda'
       CodeUri: ./lambdas/presigned_url
       Handler: generate_presigned_url.lambda_handler
       Role: !GetAtt S3PresignedRole.Arn
@@ -66,9 +67,10 @@ Resources:
             Method: GET
             RestApiId: !Ref S3DriveAPIGateway
 
-  S3PutObjectDynamoLambda:
+  S3ActionsDynamoLambda:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub '${AWS::StackName}-${AWS::Region}-S3ActionDynamoLambda'
       CodeUri: ./lambdas/s3_event_actions
       Handler: s3_actions.lambda_handler
       Role: !GetAtt DynamoDBPUTRole.Arn
@@ -91,6 +93,7 @@ Resources:
   ReportGenerateLambda:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub '${AWS::StackName}-${AWS::Region}-ReportGenerateLambda'
       CodeUri: ./lambdas/report_generator
       Handler: s3_ops_report_generator.lambda_handler
       Role: !GetAtt ReportGeneratorRole.Arn
@@ -110,6 +113,7 @@ Resources:
   SNSSubscriptionLambda:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub '${AWS::StackName}-${AWS::Region}-SNSSubscriptionLambda'
       CodeUri: ./lambdas/sns_subscription
       Handler: sns_email_subscription.lambda_handler
       Role: !GetAtt SNSSubscriptionRole.Arn

@@ -22,9 +22,9 @@ def lambda_handler(event, context):
     object_version_id = event.get("s3").get("object").get("versionId")
     content_type = object_key.split('.')[1]  # Getting file extension
     is_exists = None  # Getting event type
-    if event.get('eventName', '') == 'ObjectCreated:Put':
+    if 'ObjectCreated:' in event.get('eventName', ''):
         is_exists = 'YES'
-    elif event.get('eventName', '') == 'ObjectRemoved:DeleteMarkerCreated':
+    elif 'ObjectRemoved:' in event.get('eventName', ''):
         is_exists = 'NO'
 
     # Getting dynamodb client
