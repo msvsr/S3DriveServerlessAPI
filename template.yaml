@@ -1,13 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  S3DriveAPI
-
-  S3Drive: To store files
-  DynamoTable: To store file details.
-  S3DriveAPIGateway: To get presigned url for s3 bucket.
-  GetPresignedURLLambda: Generates presigned url
-  # TODO: Need to change description
+  # TODO: Need to ADD description
 
 Resources:
   S3Drive:
@@ -75,8 +69,8 @@ Resources:
   S3PutObjectDynamoLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./lambdas/s3_event_put_object
-      Handler: s3_put_object.lambda_handler
+      CodeUri: ./lambdas/s3_event_actions
+      Handler: s3_actions.lambda_handler
       Role: !GetAtt DynamoDBPUTRole.Arn
       Runtime: python3.8
       Timeout: 60

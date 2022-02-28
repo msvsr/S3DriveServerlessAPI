@@ -39,9 +39,10 @@ def lambda_handler(event, context):
         # Getting groups of data based on is_exists
         exists_content_types, deleted_content_types = [], []
         for item in items:
-            if item.get('is_exists', ''):
+            is_exists = item.get('is_exists', '')
+            if is_exists == 'YES':
                 exists_content_types.append(item.get('file_content_type'))
-            else:
+            elif is_exists == 'NO':
                 deleted_content_types.append(item.get('file_content_type'))
 
         # Counting for each file content type

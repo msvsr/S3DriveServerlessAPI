@@ -22,10 +22,11 @@ def lambda_handler(event, context):
     object_version_id = event.get("s3").get("object").get("versionId")
     content_type = mimetypes.MimeTypes().guess_type(object_key)[0]  # Getting mime type
     is_exists = None  # Getting event type
-    if event.get('ObjectCreated:Put', ''):
-        is_exists = 1
-    elif event.get('ObjectRemoved:DeleteMarkerCreated'):
-        is_exists = 0
+    if event.get('eventName', '') == 'ObjectCreated:Put':
+        is_exists = 'YES'
+    elif event.get('eventName', '') == 'ObjectRemoved:DeleteMarkerCreated':
+        is_exists = 'NO'
+
     # Getting dynamodb client
     dynamodb_client = boto3.client('dynamodb', region)
 
