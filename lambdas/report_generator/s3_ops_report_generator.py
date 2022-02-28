@@ -33,7 +33,7 @@ def lambda_handler(event, context):
         logging.info(f"Successfully retrieved data using scan")
 
         # Converting dynamodb response to python format
-        items = [{k: TypeDeserializer().deserialize(v) for k, v in x} for x in response.get('Items', [])]
+        items = [{k: TypeDeserializer().deserialize(item[k]) for k in item} for item in response.get('Items', [])]
         print("Items", items)
 
         # Getting groups of data based on is_exists
