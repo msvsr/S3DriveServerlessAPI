@@ -35,7 +35,6 @@ env:
   PROD_REGION: us-east-1
 
   # Make these YES if you want to run that particular job
-  RUN_TEST_JOB: 'YES'
   RUN_BUILD_AND_DEPLOY_FEATURE_JOB: YES
   RUN_BUILD_AND_PACKAGE_JOB: YES
   RUN_DEPLOY_TESTING_JOB: YES
@@ -46,7 +45,7 @@ env:
 
 jobs:
   test:
-    if: github.event_name == 'push' && ${{ env.RUN_TEST_JOB == 'YES' }}
+    if: github.event_name == 'push' && true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -150,7 +149,7 @@ jobs:
           path: packaged-prod.yaml
 
   deploy-testing:
-    if: github.ref == 'refs/heads/main' && ${{ env.RUN_DEPLOY_TESTING_JOB == 'YES' }}
+    if: github.ref == 'refs/heads/main' && true
     needs: [build-and-package]
     runs-on: ubuntu-latest
     steps:
