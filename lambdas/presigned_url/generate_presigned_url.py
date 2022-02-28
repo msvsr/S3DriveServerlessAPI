@@ -2,7 +2,6 @@ import os
 import json
 import logging
 import boto3
-import mimetypes
 from botocore.config import Config
 
 logger = logging.getLogger()
@@ -20,17 +19,16 @@ def lambda_handler(event, context):
     filename = event.get('pathParameters', {}).get('filename', '')
 
     # Getting mime type
-    content_type = mimetypes.MimeTypes().guess_type(filename)[0]
+    file_parts = filename.split('.')
 
-    logging.info(f"Filename: {filename}, Content Type: {content_type}")
+    logging.info(f"File parts: {file_parts}")
 
     # Checking for content-type
-    if not content_type:
+    if not len(file_parts) == 2:
         return {
             'statusCode': 200,
             'body': json.dumps({
-                "message": "Please provide a valid file extension. Refer this URL for valid file extensions "
-                           "https://www.iana.org/assignments/media-types/media-types.xhtml"
+                "message": "Please provide a valid file extension. Valid file type: filename.extension "
             })
         }
 
