@@ -36,7 +36,7 @@ env:
   # Remove && false to run
 jobs:
   test:
-    if: github.event_name == 'push' && false
+    if: github.event_name == 'push' && true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -82,7 +82,7 @@ jobs:
 
 
   build-and-package:
-    if: github.ref == 'refs/heads/main' && false
+    if: github.ref == 'refs/heads/main' && true
     needs: [test]
     runs-on: ubuntu-latest
     steps:
@@ -140,7 +140,7 @@ jobs:
           path: packaged-prod.yaml
 
   deploy-testing:
-    if: github.ref == 'refs/heads/main' && false
+    if: github.ref == 'refs/heads/main' && true
     needs: [build-and-package]
     runs-on: ubuntu-latest
     steps:
@@ -219,7 +219,7 @@ jobs:
             --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}
 
   delete-main:
-    if: github.ref == 'refs/heads/main' && true
+    if: github.ref == 'refs/heads/main' && false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -245,7 +245,7 @@ jobs:
             --no-prompts
 
   delete-feature:
-    if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete' && true
+    if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete' && false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
